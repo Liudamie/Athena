@@ -9,7 +9,7 @@
 #define INC_SYSLAUNCH_H_
 
 #define ENABLE_UWB_DW3000
-
+#define ENABLE_RELATIVE_LOCALIZATION
 int getInitStatus();
 
 #endif /* INC_SYSLAUNCH_H_ */

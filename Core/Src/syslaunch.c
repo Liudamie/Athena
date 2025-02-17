@@ -9,6 +9,8 @@
 #include "dw3000_cbll.h"
 #include "adhocuwb.h"
 #include "uwb_send_print.h"
+#include "relative_localization.h"
+#include "relative_control.h"
 
 SemaphoreHandle_t spiDeckTxComplete = NULL;
 SemaphoreHandle_t spiDeckRxComplete = NULL;
@@ -97,4 +99,30 @@ static const UserInit uwb_launch_struct = {
 };
 
 USER_INIT(uwb_launch_struct);
+#endif
+
+#ifdef ENABLE_RELATIVE_LOCALIZATION
+
+const osThreadAttr_t locoFlyTaskAttributes = {
+		.name = "locoFlyTask",
+		.stack_size = 2 * 150 * sizeof(StackType_t), //TODO 应该定义一个宏来决定栈的最小大小
+		.priority = (osPriority_t) osPriorityNormal,
+};
+
+static void locoFlyTask(){
+	relativeLocoInit();
+	//relativeControlInit();
+}
+static osThreadId_t locoFlyTaskHandle;
+
+static void loco_fly_init(){
+	locoFlyTaskHandle = osThreadNew(locoFlyTask, NULL, &locoFlyTaskAttributes);
+}
+
+static const UserInit loco_fly_struct = {
+		.init = loco_fly_init,
+		.name = "loco_init",
+};
+
+USER_INIT(loco_fly_struct);
 #endif
